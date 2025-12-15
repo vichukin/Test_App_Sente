@@ -7,8 +7,6 @@ using Test_App_Sente;
 
 namespace DbMetaTool
 {
-    //"C:\Program Files\Firebird\Firebird_5_0\TESTDB_FOR_TASK_SENTE" - DB file
-    //Database="C:\Program Files\Firebird\Firebird_5_0\TESTDB_FOR_TASK_SENTE"; DataSource=localhost; Port=3050; User=SYSDBA; Password=masterkey; Dialect=3; CharSet=UTF8; Role=; ServerType=0 - DB file
     public static class Program
     {
         // Przykładowe wywołania:
@@ -19,13 +17,7 @@ namespace DbMetaTool
         {
             if (args.Length == 0)
             {
-                //string connString = "Database=\"C:\\Program Files\\Firebird\\Firebird_5_0\\TESTDB_FOR_TASK_SENTE\"; DataSource=localhost; Port=3050; User=SYSDBA; Password=masterkey; Dialect=3; CharSet=UTF8; Role=; ServerType=0";
-                //string connString1 = "Database=\"C:\\Program Files\\Firebird\\Firebird_5_0\\UPDATE_TEST_DB\"; DataSource=localhost; Port=3050; User=SYSDBA; Password=masterkey; Dialect=3; CharSet=UTF8; Role=; ServerType=0";
-                //string outDir = "C:\\out";
-                //BuildDatabase(outDir, outDir);
-                //UpdateDatabase(connString1, outDir);
-                //var t = Console.ReadLine();
-                //ExportScripts(t, outDir);
+                
                 Console.WriteLine("Użycie:");
                 Console.WriteLine("  build-db --db-dir <ścieżka> --scripts-dir <ścieżka>");
                 Console.WriteLine("  export-scripts --connection-string <connStr> --output-dir <ścieżka>");
@@ -496,7 +488,6 @@ ORDER BY f.RDB$FIELD_NAME;
 
         private static List<string> GenerateTableScripts(FbConnection connection)
         {
-            // Запрос на получение всех колонок пользовательских таблиц
             string sql = @"
 SELECT
     r.RDB$RELATION_NAME AS TABLE_NAME,
@@ -569,14 +560,12 @@ ORDER BY
                     ColumnMetadata col = columns[i];
                     sb.Append($"    {col.ColumnName} ");
 
-                    // Используем домен, если он есть и не системный
                     if (!string.IsNullOrEmpty(col.DomainName) && !col.DomainName.StartsWith("RDB$"))
                     {
                         sb.Append(col.DomainName);
                     }
                     else
                     {
-                        // Генерируем тип из RDB$FIELDS (динамически)
                         sb.Append(GetTypeDeclaration( col.FieldTypeId, col.FieldSubType, col.FieldLength, col.FieldScale, col.CharLength));
                     }
 
@@ -595,8 +584,6 @@ ORDER BY
 
             return scripts;
         }
-
-        // Класс для хранения метаданных колонки
 
         private static List<string> GenerateProcedureScripts(FbConnection connection)
         {
